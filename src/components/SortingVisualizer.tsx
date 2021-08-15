@@ -1,45 +1,79 @@
 import React, { useEffect, useState } from "react";
-import { mergeSort } from "../algorithms/mergeSort";
+import { getMergeSortAnimations } from "../algorithms/mergeSort";
+import { useWindowDimensions } from "../hooks/useWindowDimension";
+import { randomIntFromInterval } from "../utils/randomIntFromInterval";
 import { ArrayComponent } from "./ArrayComponent";
+
+import "./SortingVisualizer.css";
+
+const DEFAULT_COLOR = "#32d1c4";
+const CURRENT_COLOR = "red";
 
 interface SortingVisualizerProps {}
 
 export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
   const [array, setArray] = useState<Array<number>>([]);
+  const { height, width } = useWindowDimensions();
 
   useEffect(() => {
     resetArray();
   }, []);
 
-  const randomIntFromInterval = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
-
   const resetArray = () => {
     const array = [];
-    for (let i = 0; i < 310; i++) {
-      array.push(randomIntFromInterval(5, 700));
+    for (let i = 0; i < 300; i++) {
+      array.push(randomIntFromInterval(20, 700));
     }
     setArray(array);
   };
 
+  const runMergeSort = () => {
+    const animations = getMergeSortAnimations(array);
+    for (let i = 0; i < animations.length; i++) {
+      const arrayBars: any = document.getElementsByClassName("array-bar");
+      const isColorChange = i % 3 !== 2;
+      if (isColorChange) {
+        const [firstBar, secondBar] = animations[i];
+        const firstBarStyle = arrayBars[firstBar].style;
+        const secondBarStyle = arrayBars[secondBar].style;
+        const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
+        setTimeout(() => {
+          firstBarStyle.backgroundColor = color;
+          secondBarStyle.backgroundColor = color;
+        }, i * 2);
+      } else {
+        setTimeout(() => {
+          const [firstBar, newHeight] = animations[i];
+          const firstBarStyle = arrayBars[firstBar].style;
+          firstBarStyle.height = `${newHeight}px`;
+        }, i * 2);
+      }
+    }
+  };
+
   return (
-    <div>
-      <div style={{ marginTop: "10px" }}>sorting visualizer</div>
-      <button
-        onClick={() => {
-          resetArray();
-        }}
-      >
-        generate new array
-      </button>
-      <button
-        onClick={() => {
-          mergeSort();
-        }}
-      >
-        merge sort
-      </button>
+    <div
+      className="container"
+      style={{ minHeight: `${height}px`, minWidth: `${width}px` }}
+    >
+      <div className="title-bar">Sorting Visualizer</div>
+      <div className="btn-bar">
+        <button className="btn btn-gen" onClick={resetArray}>
+          generate new array
+        </button>
+        <button className="btn btn-algo" onClick={runMergeSort}>
+          merge sort
+        </button>
+        <button className="btn btn-algo" onClick={runMergeSort}>
+          merge sort
+        </button>
+        <button className="btn btn-algo" onClick={runMergeSort}>
+          merge sort
+        </button>
+        <button className="btn btn-algo" onClick={runMergeSort}>
+          merge sort
+        </button>
+      </div>
       <ArrayComponent array={array} />
     </div>
   );

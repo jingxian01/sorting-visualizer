@@ -14,7 +14,7 @@ export const ArrayComponent: React.FC<ArrayComponentProps> = ({ array }) => {
           <div
             className="array-bar"
             key={index}
-            style={{ backgroundColor: "#00edd5", height: `${arr}px` }}
+            style={{ height: `${arr}px` }}
           ></div>
         );
       })}

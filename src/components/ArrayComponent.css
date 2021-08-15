@@ -1,8 +1,12 @@
 .array-container {
-  margin-top: 70px;
+  margin: 0 auto;
+  width: 100%;
+  position: absolute;
+  bottom: 10%;
 }
 
 .array-bar {
+  background-color: #32d1c4;
   width: 2px;
   display: inline-block;
   margin: 0 1px;

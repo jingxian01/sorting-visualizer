@@ -1,0 +1,45 @@
+.container {
+  background-color: #00131f;
+}
+
+.title-bar {
+  background-color: #002236;
+  color: white;
+  font-size: x-large;
+  font-weight: bold;
+  padding: 12px 0px;
+}
+
+.btn-bar {
+  background-color: #001d2e;
+  padding: 16px 0px;
+}
+
+.btn {
+  border: none;
+  margin: 0px 1%;
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  color: white;
+}
+
+.btn:hover {
+  cursor: pointer;
+}
+
+.btn-gen {
+  background-color: #ee0083;
+}
+
+.btn-gen:hover {
+  background-color: #d30074;
+}
+
+.btn-algo {
+  background-color: #eca200;
+}
+
+.btn-algo:hover {
+  background-color: #cf8e00;
+}
