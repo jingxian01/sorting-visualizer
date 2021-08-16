@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { getInsertionSortAnimations } from "../algorithms/insertionSort";
-import { getMergeSortAnimations } from "../algorithms/mergeSort";
-import { useWindowDimensions } from "../hooks/useWindowDimension";
-import { randomIntFromInterval } from "../utils/randomIntFromInterval";
-import { ArrayComponent } from "./ArrayComponent";
-import { Message } from "./Message";
+import {
+  bubbleSort,
+  getBubbleSortAnimations,
+} from "../../algorithms/bubbleSort";
+import { getInsertionSortAnimations } from "../../algorithms/insertionSort";
+import { getMergeSortAnimations } from "../../algorithms/mergeSort";
+import { useWindowDimensions } from "../../hooks/useWindowDimension";
+import { randomIntFromInterval } from "../../utils/randomIntFromInterval";
+import { ArrayComponent } from "../array/ArrayComponent";
+import { Message } from "../Message";
 
 import "./SortingVisualizer.css";
 
@@ -97,6 +101,33 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
     }
   };
 
+  const runBubbleSort = () => {
+    const animations = getBubbleSortAnimations(array);
+    for (let i = 0; i < animations.length; i++) {
+      const arrayBars: any = document.getElementsByClassName("array-bar");
+      const isColorChange = i % 3 !== 2;
+      if (isColorChange) {
+        const [firstBar, secondBar] = animations[i];
+        const firstBarStyle = arrayBars[firstBar].style;
+        const secondBarStyle = arrayBars[secondBar].style;
+        const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
+        setTimeout(() => {
+          firstBarStyle.backgroundColor = color;
+          secondBarStyle.backgroundColor = color;
+        }, i * 0.2);
+      } else {
+        setTimeout(() => {
+          const [firstBar, newHeight, isLastElement] = animations[i];
+          const firstBarStyle = arrayBars[firstBar].style;
+          firstBarStyle.height = `${newHeight}px`;
+          if (isLastElement) {
+            firstBarStyle.backgroundColor = SORTED_COLOR;
+          }
+        }, i * 0.2);
+      }
+    }
+  };
+
   return (
     <>
       {width <= 768 ? (
@@ -117,6 +148,9 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
             <button className="btn btn-algo" onClick={runInsertionSort}>
               insertion sort
             </button>
+            <button className="btn btn-algo" onClick={runBubbleSort}>
+              bubble sort
+            </button>
           </div>
           <ArrayComponent array={array} />
         </div>
@@ -126,28 +160,28 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
 };
 
 // for testing algorithms
-// const testSortingAlgorithms = () => {
-//   for (let i = 0; i < 100; i++) {
-//     const array = [];
-//     const length = randomIntFromInterval(1, 1000);
-//     for (let i = 0; i < length; i++) {
-//       array.push(randomIntFromInterval(-1000, 1000));
-//     }
-//     const javaScriptSortedArray = array.slice().sort((a, b) => a - b);
-//     const selfSortedArray = insertionSort(array.slice());
-//     console.log(arraysAreEqual(javaScriptSortedArray, selfSortedArray));
-//   }
-// };
+const testSortingAlgorithms = () => {
+  for (let i = 0; i < 100; i++) {
+    const array = [];
+    const length = randomIntFromInterval(1, 1000);
+    for (let i = 0; i < length; i++) {
+      array.push(randomIntFromInterval(-1000, 1000));
+    }
+    const javaScriptSortedArray = array.slice().sort((a, b) => a - b);
+    const selfSortedArray = bubbleSort(array.slice());
+    console.log(arraysAreEqual(javaScriptSortedArray, selfSortedArray));
+  }
+};
 
-// const arraysAreEqual = (
-//   firstArray: Array<number>,
-//   secondArray: Array<number>
-// ) => {
-//   if (firstArray.length !== secondArray.length) return false;
-//   for (let i = 0; i < firstArray.length; i++) {
-//     if (firstArray[i] !== secondArray[i]) {
-//       return false;
-//     }
-//   }
-//   return true;
-// };
+const arraysAreEqual = (
+  firstArray: Array<number>,
+  secondArray: Array<number>
+) => {
+  if (firstArray.length !== secondArray.length) return false;
+  for (let i = 0; i < firstArray.length; i++) {
+    if (firstArray[i] !== secondArray[i]) {
+      return false;
+    }
+  }
+  return true;
+};
