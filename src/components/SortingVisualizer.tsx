@@ -20,7 +20,7 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
 
   useEffect(() => {
     resetArray();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const resetArray = () => {
     if (array) {
