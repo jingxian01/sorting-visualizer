@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  bubbleSort,
-  getBubbleSortAnimations,
-} from "../../algorithms/bubbleSort";
+import { getBubbleSortAnimations } from "../../algorithms/bubbleSort";
 import { getInsertionSortAnimations } from "../../algorithms/insertionSort";
 import { getMergeSortAnimations } from "../../algorithms/mergeSort";
 import { useWindowDimensions } from "../../hooks/useWindowDimension";
@@ -160,28 +157,28 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
 };
 
 // for testing algorithms
-const testSortingAlgorithms = () => {
-  for (let i = 0; i < 100; i++) {
-    const array = [];
-    const length = randomIntFromInterval(1, 1000);
-    for (let i = 0; i < length; i++) {
-      array.push(randomIntFromInterval(-1000, 1000));
-    }
-    const javaScriptSortedArray = array.slice().sort((a, b) => a - b);
-    const selfSortedArray = bubbleSort(array.slice());
-    console.log(arraysAreEqual(javaScriptSortedArray, selfSortedArray));
-  }
-};
+// const testSortingAlgorithms = () => {
+//   for (let i = 0; i < 100; i++) {
+//     const array = [];
+//     const length = randomIntFromInterval(1, 1000);
+//     for (let i = 0; i < length; i++) {
+//       array.push(randomIntFromInterval(-1000, 1000));
+//     }
+//     const javaScriptSortedArray = array.slice().sort((a, b) => a - b);
+//     const selfSortedArray = bubbleSort(array.slice());
+//     console.log(arraysAreEqual(javaScriptSortedArray, selfSortedArray));
+//   }
+// };
 
-const arraysAreEqual = (
-  firstArray: Array<number>,
-  secondArray: Array<number>
-) => {
-  if (firstArray.length !== secondArray.length) return false;
-  for (let i = 0; i < firstArray.length; i++) {
-    if (firstArray[i] !== secondArray[i]) {
-      return false;
-    }
-  }
-  return true;
-};
+// const arraysAreEqual = (
+//   firstArray: Array<number>,
+//   secondArray: Array<number>
+// ) => {
+//   if (firstArray.length !== secondArray.length) return false;
+//   for (let i = 0; i < firstArray.length; i++) {
+//     if (firstArray[i] !== secondArray[i]) {
+//       return false;
+//     }
+//   }
+//   return true;
+// };
