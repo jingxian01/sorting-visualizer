@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  getInsertionSortAnimations,
-  insertionSort,
-} from "../algorithms/insertionSort";
+import { getInsertionSortAnimations } from "../algorithms/insertionSort";
 import { getMergeSortAnimations } from "../algorithms/mergeSort";
 import { useWindowDimensions } from "../hooks/useWindowDimension";
 import { randomIntFromInterval } from "../utils/randomIntFromInterval";

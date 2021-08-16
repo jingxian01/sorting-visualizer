@@ -24,16 +24,16 @@ export const getInsertionSortAnimations = (array: Array<number>) => {
 };
 
 // actual algorithm
-export const insertionSort = (array: Array<number>) => {
-  for (let j = 1; j < array.length; j++) {
-    let i = j - 1;
+// export const insertionSort = (array: Array<number>) => {
+//   for (let j = 1; j < array.length; j++) {
+//     let i = j - 1;
 
-    while (i > -1 && array[i] > array[j]) {
-      const temp = array[i];
-      array[i--] = array[j];
-      array[j--] = temp;
-    }
-  }
+//     while (i > -1 && array[i] > array[j]) {
+//       const temp = array[i];
+//       array[i--] = array[j];
+//       array[j--] = temp;
+//     }
+//   }
 
-  return array;
-};
+//   return array;
+// };
