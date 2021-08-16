@@ -15,10 +15,15 @@ const mergeSort = (
 ) => {
   if (start >= end) return;
 
+  let isFinalMerge = 0;
   const mid = Math.floor((start + end) / 2);
   mergeSort(auxArray, mainArray, start, mid, animations);
   mergeSort(auxArray, mainArray, mid + 1, end, animations);
-  merge(mainArray, auxArray, start, mid, end, animations);
+
+  if (start === 0 && end === mainArray.length - 1) {
+    isFinalMerge = 1;
+  }
+  merge(mainArray, auxArray, start, mid, end, animations, isFinalMerge);
 };
 
 const merge = (
@@ -27,7 +32,8 @@ const merge = (
   start: number,
   mid: number,
   end: number,
-  animations: Array<Array<number>>
+  animations: Array<Array<number>>,
+  isFinalMerge: number
 ) => {
   let k = start;
   let i = start;
@@ -41,12 +47,12 @@ const merge = (
     if (auxArray[i] <= auxArray[j]) {
       // overwrite value of mainArray[k] with value of auxArray[i]
       // increase k and i
-      animations.push([k, auxArray[i]]); // change array-bar's height
+      animations.push([k, auxArray[i], isFinalMerge]); // change array-bar's height
       mainArray[k++] = auxArray[i++];
     } else {
       // overwrite value of mainArray[k] with value of auxArray[j]
       // increase k and j
-      animations.push([k, auxArray[j]]); //change array-bar's height
+      animations.push([k, auxArray[j], isFinalMerge]); //change array-bar's height
       mainArray[k++] = auxArray[j++];
     }
   }
@@ -58,7 +64,7 @@ const merge = (
 
     // overwrite value of mainArray[k] with value of auxArray[j]
     // increase k and i
-    animations.push([k, auxArray[i]]); // change array-bar's height
+    animations.push([k, auxArray[i], isFinalMerge]); // change array-bar's height
     mainArray[k++] = auxArray[i++];
   }
 
@@ -69,7 +75,7 @@ const merge = (
 
     // overwrite value of mainArray[k] with value of auxArray[j]
     // increase k and i
-    animations.push([k, auxArray[j]]); // change array-bar's height
+    animations.push([k, auxArray[j], isFinalMerge]); // change array-bar's height
     mainArray[k++] = auxArray[j++];
   }
 };
