@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getBubbleSortAnimations } from "../../algorithms/bubbleSort";
+import { getHeapSortAnimations } from "../../algorithms/heapSort";
 import { getInsertionSortAnimations } from "../../algorithms/insertionSort";
 import { getMergeSortAnimations } from "../../algorithms/mergeSort";
 import { useWindowDimensions } from "../../hooks/useWindowDimension";
@@ -9,9 +10,9 @@ import { Message } from "../Message";
 
 import "./SortingVisualizer.css";
 
-const DEFAULT_COLOR = "#32d1c4";
+const DEFAULT_COLOR = "rgb(50, 209, 196)";
 const CURRENT_COLOR = "red";
-const SORTED_COLOR = "purple";
+const SORTED_COLOR = "rgb(224, 88, 224)";
 
 interface SortingVisualizerProps {}
 
@@ -48,6 +49,7 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
         const secondBarStyle = arrayBars[secondBar].style;
         const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
         setTimeout(() => {
+          console.log(firstBarStyle.backgroundColor);
           if (
             firstBarStyle.backgroundColor !== SORTED_COLOR &&
             secondBarStyle.backgroundColor !== SORTED_COLOR
@@ -66,6 +68,33 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
           const firstBarStyle = arrayBars[firstBar].style;
           firstBarStyle.height = `${newHeight}px`;
           if (isFinalMerge) {
+            firstBarStyle.backgroundColor = SORTED_COLOR;
+          }
+        }, i * 2);
+      }
+    }
+  };
+
+  const runHeapSort = () => {
+    const animations = getHeapSortAnimations(array);
+    for (let i = 0; i < animations.length; i++) {
+      const arrayBars: any = document.getElementsByClassName("array-bar");
+      const isColorChange = i % 3 !== 2;
+      if (isColorChange) {
+        const [firstBar, secondBar] = animations[i];
+        const firstBarStyle = arrayBars[firstBar].style;
+        const secondBarStyle = arrayBars[secondBar].style;
+        const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
+        setTimeout(() => {
+          firstBarStyle.backgroundColor = color;
+          secondBarStyle.backgroundColor = color;
+        }, i * 2);
+      } else {
+        setTimeout(() => {
+          const [firstBar, newHeight, isDone] = animations[i];
+          const firstBarStyle = arrayBars[firstBar].style;
+          firstBarStyle.height = `${newHeight}px`;
+          if (isDone) {
             firstBarStyle.backgroundColor = SORTED_COLOR;
           }
         }, i * 2);
@@ -142,6 +171,9 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
             <button className="btn btn-algo" onClick={runMergeSort}>
               merge sort
             </button>
+            <button className="btn btn-algo" onClick={runHeapSort}>
+              heap sort
+            </button>
             <button className="btn btn-algo" onClick={runInsertionSort}>
               insertion sort
             </button>
@@ -165,7 +197,7 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
 //       array.push(randomIntFromInterval(-1000, 1000));
 //     }
 //     const javaScriptSortedArray = array.slice().sort((a, b) => a - b);
-//     const selfSortedArray = bubbleSort(array.slice());
+//     const selfSortedArray = heapSort(array.slice());
 //     console.log(arraysAreEqual(javaScriptSortedArray, selfSortedArray));
 //   }
 // };
