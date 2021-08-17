@@ -41,5 +41,21 @@
 }
 
 .btn-algo:hover {
-  background-color: #cf8e00;
+  background-color: #e99f00;
+}
+
+.btn-disabled {
+  background-color: gray;
+}
+
+.btn-disabled:hover {
+  cursor: no-drop;
+}
+
+.btn-running {
+  background-color: rgb(6, 185, 0);
+}
+
+.btn-running:hover {
+  cursor: no-drop;
 }

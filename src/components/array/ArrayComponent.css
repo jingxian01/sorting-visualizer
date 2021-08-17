@@ -1,8 +1,9 @@
 .array-container {
   margin: 0 auto;
+  margin-top: 20px;
   width: 100%;
   position: absolute;
-  bottom: 10%;
+  bottom: 12%;
 }
 
 .array-bar {

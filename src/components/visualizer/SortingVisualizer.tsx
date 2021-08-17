@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { getBubbleSortAnimations } from "../../algorithms/bubbleSort";
 import { getHeapSortAnimations } from "../../algorithms/heapSort";
 import { getInsertionSortAnimations } from "../../algorithms/insertionSort";
 import { getMergeSortAnimations } from "../../algorithms/mergeSort";
-import { useWindowDimensions } from "../../hooks/useWindowDimension";
+import { algorithmReducer } from "../../utils/algorithmReducer";
 import { randomIntFromInterval } from "../../utils/randomIntFromInterval";
 import { ArrayComponent } from "../array/ArrayComponent";
-import { Message } from "../Message";
 
 import "./SortingVisualizer.css";
 
@@ -18,11 +17,40 @@ interface SortingVisualizerProps {}
 
 export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
   const [array, setArray] = useState<Array<number>>([]);
-  const { height, width } = useWindowDimensions();
+  const [
+    {
+      isRunning,
+      isMergeSortRunning,
+      isHeapSortRunning,
+      isInsertionSortRunning,
+      isBubbleSortRunning,
+    },
+    dispatch,
+  ] = useReducer(algorithmReducer, {
+    isRunning: false,
+    isMergeSortRunning: false,
+    isHeapSortRunning: false,
+    isInsertionSortRunning: false,
+    isBubbleSortRunning: false,
+  });
 
   useEffect(() => {
     resetArray();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isRunning) {
+      if (isMergeSortRunning) {
+        runMergeSort();
+      } else if (isHeapSortRunning) {
+        runHeapSort();
+      } else if (isInsertionSortRunning) {
+        runInsertionSort();
+      } else if (isBubbleSortRunning) {
+        runBubbleSort();
+      }
+    }
+  }, [isRunning, isMergeSortRunning, isHeapSortRunning, isBubbleSortRunning]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const resetArray = () => {
     if (array) {
@@ -49,7 +77,6 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
         const secondBarStyle = arrayBars[secondBar].style;
         const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
         setTimeout(() => {
-          console.log(firstBarStyle.backgroundColor);
           if (
             firstBarStyle.backgroundColor !== SORTED_COLOR &&
             secondBarStyle.backgroundColor !== SORTED_COLOR
@@ -69,6 +96,9 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
           firstBarStyle.height = `${newHeight}px`;
           if (isFinalMerge) {
             firstBarStyle.backgroundColor = SORTED_COLOR;
+          }
+          if (i === animations.length - 1) {
+            dispatch({ type: "isFinished" });
           }
         }, i * 2);
       }
@@ -97,6 +127,9 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
           if (isDone) {
             firstBarStyle.backgroundColor = SORTED_COLOR;
           }
+          if (i === animations.length - 1) {
+            dispatch({ type: "isFinished" });
+          }
         }, i * 2);
       }
     }
@@ -115,14 +148,17 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
         setTimeout(() => {
           firstBarStyle.backgroundColor = color;
           secondBarStyle.backgroundColor = color;
-        }, i * 1);
+        }, i * 0.2);
       } else {
         setTimeout(() => {
           const [firstBar, newHeight] = animations[i];
           const firstBarStyle = arrayBars[firstBar].style;
           firstBarStyle.height = `${newHeight}px`;
           firstBarStyle.backgroundColor = SORTED_COLOR;
-        }, i * 1);
+          if (i === animations.length - 1) {
+            dispatch({ type: "isFinished" });
+          }
+        }, i * 0.2);
       }
     }
   };
@@ -149,6 +185,9 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
           if (isLastElement) {
             firstBarStyle.backgroundColor = SORTED_COLOR;
           }
+          if (i === animations.length - 1) {
+            dispatch({ type: "isFinished" });
+          }
         }, i * 0.2);
       }
     }
@@ -156,34 +195,81 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
 
   return (
     <>
-      {width <= 768 ? (
-        <Message />
-      ) : (
-        <div
-          className="container"
-          style={{ minHeight: `${height}px`, minWidth: `${width}px` }}
-        >
-          <div className="title-bar">Sorting Visualizer</div>
-          <div className="btn-bar">
-            <button className="btn btn-gen" onClick={resetArray}>
-              generate new array
-            </button>
-            <button className="btn btn-algo" onClick={runMergeSort}>
-              merge sort
-            </button>
-            <button className="btn btn-algo" onClick={runHeapSort}>
-              heap sort
-            </button>
-            <button className="btn btn-algo" onClick={runInsertionSort}>
-              insertion sort
-            </button>
-            <button className="btn btn-algo" onClick={runBubbleSort}>
-              bubble sort
-            </button>
-          </div>
-          <ArrayComponent array={array} />
+      <div className="container">
+        <div className="title-bar">Sorting Visualizer</div>
+        <div className="btn-bar">
+          <button
+            className={isRunning ? "btn btn-disabled" : "btn btn-gen"}
+            disabled={isRunning ? true : false}
+            onClick={() => {
+              resetArray();
+            }}
+          >
+            generate new array
+          </button>
+          <button
+            className={
+              isRunning
+                ? isMergeSortRunning
+                  ? "btn btn-running"
+                  : "btn btn-disabled"
+                : "btn btn-algo"
+            }
+            disabled={isRunning ? true : false}
+            onClick={() => {
+              dispatch({ type: "runMergeSort" });
+            }}
+          >
+            merge sort
+          </button>
+          <button
+            className={
+              isRunning
+                ? isHeapSortRunning
+                  ? "btn btn-running"
+                  : "btn btn-disabled"
+                : "btn btn-algo"
+            }
+            disabled={isRunning ? true : false}
+            onClick={() => {
+              dispatch({ type: "runHeapSort" });
+            }}
+          >
+            heap sort
+          </button>
+          <button
+            className={
+              isRunning
+                ? isInsertionSortRunning
+                  ? "btn btn-running"
+                  : "btn btn-disabled"
+                : "btn btn-algo"
+            }
+            disabled={isRunning ? true : false}
+            onClick={() => {
+              dispatch({ type: "runInsertionSort" });
+            }}
+          >
+            insertion sort
+          </button>
+          <button
+            className={
+              isRunning
+                ? isBubbleSortRunning
+                  ? "btn btn-running"
+                  : "btn btn-disabled"
+                : "btn btn-algo"
+            }
+            disabled={isRunning ? true : false}
+            onClick={() => {
+              dispatch({ type: "runBubbleSort" });
+            }}
+          >
+            bubble sort
+          </button>
         </div>
-      )}
+        <ArrayComponent array={array} />
+      </div>
     </>
   );
 };
