@@ -1,17 +1,14 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { getBubbleSortAnimations } from "../../algorithms/bubbleSort";
-import { getHeapSortAnimations } from "../../algorithms/heapSort";
-import { getInsertionSortAnimations } from "../../algorithms/insertionSort";
-import { getMergeSortAnimations } from "../../algorithms/mergeSort";
+import { runBubbleSort } from "../../animations/runBubbleSort";
+import { runHeapSort } from "../../animations/runHeapSort";
+import { runInsertionSort } from "../../animations/runInsertionSort";
+import { runMergeSort } from "../../animations/runMergeSort";
 import { algorithmReducer } from "../../utils/algorithmReducer";
+import { DEFAULT_COLOR } from "../../utils/animationsColor";
 import { randomIntFromInterval } from "../../utils/randomIntFromInterval";
+import { AlgorithmButton } from "../AlgorithmButton";
 import { ArrayComponent } from "../array/ArrayComponent";
-
 import "./SortingVisualizer.css";
-
-const DEFAULT_COLOR = "rgb(50, 209, 196)";
-const CURRENT_COLOR = "red";
-const SORTED_COLOR = "rgb(224, 88, 224)";
 
 interface SortingVisualizerProps {}
 
@@ -41,16 +38,23 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
   useEffect(() => {
     if (isRunning) {
       if (isMergeSortRunning) {
-        runMergeSort();
+        runMergeSort(array, dispatch);
       } else if (isHeapSortRunning) {
-        runHeapSort();
+        runHeapSort(array, dispatch);
       } else if (isInsertionSortRunning) {
-        runInsertionSort();
+        runInsertionSort(array, dispatch);
       } else if (isBubbleSortRunning) {
-        runBubbleSort();
+        runBubbleSort(array, dispatch);
       }
     }
-  }, [isRunning, isMergeSortRunning, isHeapSortRunning, isBubbleSortRunning]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    isRunning,
+    isMergeSortRunning,
+    isHeapSortRunning,
+    isInsertionSortRunning,
+    isBubbleSortRunning,
+    array,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const resetArray = () => {
     if (array) {
@@ -64,133 +68,6 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
       newArray.push(randomIntFromInterval(20, 700));
     }
     setArray(newArray);
-  };
-
-  const runMergeSort = () => {
-    const animations = getMergeSortAnimations(array);
-    for (let i = 0; i < animations.length; i++) {
-      const arrayBars: any = document.getElementsByClassName("array-bar");
-      const isColorChange = i % 3 !== 2;
-      if (isColorChange) {
-        const [firstBar, secondBar] = animations[i];
-        const firstBarStyle = arrayBars[firstBar].style;
-        const secondBarStyle = arrayBars[secondBar].style;
-        const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
-        setTimeout(() => {
-          if (
-            firstBarStyle.backgroundColor !== SORTED_COLOR &&
-            secondBarStyle.backgroundColor !== SORTED_COLOR
-          ) {
-            firstBarStyle.backgroundColor = color;
-            secondBarStyle.backgroundColor = color;
-          } else if (firstBarStyle.backgroundColor !== SORTED_COLOR) {
-            firstBarStyle.backgroundColor = color;
-          } else if (secondBarStyle.backgroundColor !== SORTED_COLOR) {
-            secondBarStyle.backgroundColor = color;
-          }
-        }, i * 2);
-      } else {
-        setTimeout(() => {
-          const [firstBar, newHeight, isFinalMerge] = animations[i];
-          const firstBarStyle = arrayBars[firstBar].style;
-          firstBarStyle.height = `${newHeight}px`;
-          if (isFinalMerge) {
-            firstBarStyle.backgroundColor = SORTED_COLOR;
-          }
-          if (i === animations.length - 1) {
-            dispatch({ type: "isFinished" });
-          }
-        }, i * 2);
-      }
-    }
-  };
-
-  const runHeapSort = () => {
-    const animations = getHeapSortAnimations(array);
-    for (let i = 0; i < animations.length; i++) {
-      const arrayBars: any = document.getElementsByClassName("array-bar");
-      const isColorChange = i % 3 !== 2;
-      if (isColorChange) {
-        const [firstBar, secondBar] = animations[i];
-        const firstBarStyle = arrayBars[firstBar].style;
-        const secondBarStyle = arrayBars[secondBar].style;
-        const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
-        setTimeout(() => {
-          firstBarStyle.backgroundColor = color;
-          secondBarStyle.backgroundColor = color;
-        }, i * 2);
-      } else {
-        setTimeout(() => {
-          const [firstBar, newHeight, isDone] = animations[i];
-          const firstBarStyle = arrayBars[firstBar].style;
-          firstBarStyle.height = `${newHeight}px`;
-          if (isDone) {
-            firstBarStyle.backgroundColor = SORTED_COLOR;
-          }
-          if (i === animations.length - 1) {
-            dispatch({ type: "isFinished" });
-          }
-        }, i * 2);
-      }
-    }
-  };
-
-  const runInsertionSort = () => {
-    const animations = getInsertionSortAnimations(array);
-    for (let i = 0; i < animations.length; i++) {
-      const arrayBars: any = document.getElementsByClassName("array-bar");
-      const isColorChange = i % 3 !== 2;
-      if (isColorChange) {
-        const [firstBar, secondBar] = animations[i];
-        const firstBarStyle = arrayBars[firstBar].style;
-        const secondBarStyle = arrayBars[secondBar].style;
-        const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
-        setTimeout(() => {
-          firstBarStyle.backgroundColor = color;
-          secondBarStyle.backgroundColor = color;
-        }, i * 0.2);
-      } else {
-        setTimeout(() => {
-          const [firstBar, newHeight] = animations[i];
-          const firstBarStyle = arrayBars[firstBar].style;
-          firstBarStyle.height = `${newHeight}px`;
-          firstBarStyle.backgroundColor = SORTED_COLOR;
-          if (i === animations.length - 1) {
-            dispatch({ type: "isFinished" });
-          }
-        }, i * 0.2);
-      }
-    }
-  };
-
-  const runBubbleSort = () => {
-    const animations = getBubbleSortAnimations(array);
-    for (let i = 0; i < animations.length; i++) {
-      const arrayBars: any = document.getElementsByClassName("array-bar");
-      const isColorChange = i % 3 !== 2;
-      if (isColorChange) {
-        const [firstBar, secondBar] = animations[i];
-        const firstBarStyle = arrayBars[firstBar].style;
-        const secondBarStyle = arrayBars[secondBar].style;
-        const color = i % 3 === 0 ? CURRENT_COLOR : DEFAULT_COLOR;
-        setTimeout(() => {
-          firstBarStyle.backgroundColor = color;
-          secondBarStyle.backgroundColor = color;
-        }, i * 0.2);
-      } else {
-        setTimeout(() => {
-          const [firstBar, newHeight, isLastElement] = animations[i];
-          const firstBarStyle = arrayBars[firstBar].style;
-          firstBarStyle.height = `${newHeight}px`;
-          if (isLastElement) {
-            firstBarStyle.backgroundColor = SORTED_COLOR;
-          }
-          if (i === animations.length - 1) {
-            dispatch({ type: "isFinished" });
-          }
-        }, i * 0.2);
-      }
-    }
   };
 
   return (
@@ -207,66 +84,34 @@ export const SortingVisualizer: React.FC<SortingVisualizerProps> = () => {
           >
             generate new array
           </button>
-          <button
-            className={
-              isRunning
-                ? isMergeSortRunning
-                  ? "btn btn-running"
-                  : "btn btn-disabled"
-                : "btn btn-algo"
-            }
-            disabled={isRunning ? true : false}
-            onClick={() => {
-              dispatch({ type: "runMergeSort" });
-            }}
-          >
-            merge sort
-          </button>
-          <button
-            className={
-              isRunning
-                ? isHeapSortRunning
-                  ? "btn btn-running"
-                  : "btn btn-disabled"
-                : "btn btn-algo"
-            }
-            disabled={isRunning ? true : false}
-            onClick={() => {
-              dispatch({ type: "runHeapSort" });
-            }}
-          >
-            heap sort
-          </button>
-          <button
-            className={
-              isRunning
-                ? isInsertionSortRunning
-                  ? "btn btn-running"
-                  : "btn btn-disabled"
-                : "btn btn-algo"
-            }
-            disabled={isRunning ? true : false}
-            onClick={() => {
-              dispatch({ type: "runInsertionSort" });
-            }}
-          >
-            insertion sort
-          </button>
-          <button
-            className={
-              isRunning
-                ? isBubbleSortRunning
-                  ? "btn btn-running"
-                  : "btn btn-disabled"
-                : "btn btn-algo"
-            }
-            disabled={isRunning ? true : false}
-            onClick={() => {
-              dispatch({ type: "runBubbleSort" });
-            }}
-          >
-            bubble sort
-          </button>
+          <AlgorithmButton
+            name="merge sort"
+            isRunning={isRunning}
+            isAlgorithmRunning={isMergeSortRunning}
+            dispatch={dispatch}
+            dispatchType="runMergeSort"
+          />
+          <AlgorithmButton
+            name="heap sort"
+            isRunning={isRunning}
+            isAlgorithmRunning={isHeapSortRunning}
+            dispatch={dispatch}
+            dispatchType="runHeapSort"
+          />
+          <AlgorithmButton
+            name="insertion sort"
+            isRunning={isRunning}
+            isAlgorithmRunning={isInsertionSortRunning}
+            dispatch={dispatch}
+            dispatchType="runInsertionSort"
+          />
+          <AlgorithmButton
+            name="bubble sort"
+            isRunning={isRunning}
+            isAlgorithmRunning={isBubbleSortRunning}
+            dispatch={dispatch}
+            dispatchType="runBubbleSort"
+          />
         </div>
         <ArrayComponent array={array} />
       </div>
